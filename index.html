@@ -1004,18 +1004,19 @@
         }
         
         /* ACCESSIBILITY PANEL - HIGHEST Z-INDEX, LOWER POSITION */
-        .acc-panel { 
-            position: fixed; 
-            right: 10px; 
+        .acc-panel {
+            position: fixed;
+            right: 10px;
             top: 400px !important;
-            background: rgba(212, 165, 178, 0.15); 
-            backdrop-filter: blur(15px); 
-            border: 1px solid var(--border); 
-            border-radius: 25px; 
-            padding: 10px 5px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
+            background: rgba(255, 245, 248, 0.92);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 165, 178, 0.35);
+            border-radius: 25px;
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             z-index: 10000 !important;
         }
         .acc-panel .acc-actions {
@@ -1032,17 +1033,22 @@
             opacity: 1;
             pointer-events: auto;
         }
-        .acc-btn { 
-            width: 36px; 
-            height: 36px; 
-            border-radius: 50%; 
-            border: 1px solid var(--border); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            background: var(--bg); 
-            font-size: 16px; 
+        .acc-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(212, 165, 178, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: rgba(255, 245, 248, 0.95);
+            color: #7a4a58;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        .acc-btn:hover {
+            background: rgba(212, 165, 178, 0.25);
         }
         .hidden { display: none !important; }
         #lab-feedback { 
@@ -1750,6 +1756,9 @@ body.dark-mode .scoreboard-item.current {
         body.dark-mode .care-soldout-btn { color: rgba(255,255,255,0.2) !important; }
         /* ── DARK MODE PATCHES ── */
         body.dark-mode nav { background: var(--bg); }
+        body.dark-mode .acc-panel { background: rgba(30, 15, 20, 0.88); border-color: rgba(212,165,178,0.25); }
+        body.dark-mode .acc-btn { background: rgba(45, 22, 30, 0.95); color: #e8b4c4; border-color: rgba(212,165,178,0.3); }
+        body.dark-mode .acc-btn:hover { background: rgba(212,165,178,0.18); }
         body.dark-mode .care-product-card { background: rgba(20,10,14,0.85); border-color: rgba(212,165,178,0.15); }
         body.dark-mode .care-product-card input,
         body.dark-mode .registry-input { background: rgba(212,165,178,0.06); color: #fff; border-color: rgba(212,165,178,0.2); }
@@ -1757,6 +1766,77 @@ body.dark-mode .scoreboard-item.current {
             /* Mobile: no floater/icon overlap with content */
             .bag-icon-btn { z-index: 10000; }
             body.on-lab-page .logo-container { z-index: 8500 !important; position: relative; }
+        }
+
+        /* ── HERO SLIDESHOW ── */
+        .hero-section {
+            width: 100%;
+            max-width: 860px;
+            margin: 0 auto 32px auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: 48px;
+            border: 1px solid var(--border);
+            height: 400px;
+        }
+        .hero-slides {
+            display: flex;
+            height: 100%;
+            transition: transform 0.75s cubic-bezier(0.25, 1, 0.3, 1);
+            will-change: transform;
+        }
+        .hero-slide {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            pointer-events: none;
+            user-select: none;
+        }
+        .hero-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(212, 165, 178, 0.18);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 46px;
+            height: 46px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: background 0.2s;
+        }
+        .hero-btn:hover { background: rgba(212, 165, 178, 0.38); }
+        .hero-btn-prev { left: 16px; }
+        .hero-btn-next { right: 16px; }
+        .hero-dots {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 7px;
+            z-index: 2;
+        }
+        .hero-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(212, 165, 178, 0.4);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .hero-dot.active {
+            background: var(--pink);
+            transform: scale(1.4);
+        }
+        @media (max-width: 600px) {
+            .hero-section { height: 240px; border-radius: 28px; }
         }
     </style>
 </head>
@@ -1867,6 +1947,18 @@ body.dark-mode .scoreboard-item.current {
         <button class="nav-link" onclick="showPage('encyclopedia', this)" data-he="אנציקלופדיה" data-en="ENCYCLOPEDIA">אנציקלופדיה</button>
         <button class="nav-link" onclick="showPage('lab', this)" data-he="מעבדה" data-en="LAB">מעבדה</button>
     </nav>
+
+    <!-- HERO SLIDESHOW -->
+    <div id="hero-section" class="hero-section px-0">
+        <div class="hero-slides" id="hero-slides"></div>
+        <button class="hero-btn hero-btn-prev" onclick="heroNav(-1)" aria-label="Previous">
+            <div class="arrow-shape arrow-left"></div>
+        </button>
+        <button class="hero-btn hero-btn-next" onclick="heroNav(1)" aria-label="Next">
+            <div class="arrow-shape arrow-right"></div>
+        </button>
+        <div class="hero-dots" id="hero-dots"></div>
+    </div>
 
     <main id="page-intro" class="max-w-2xl mx-auto p-6 text-center">
         <div class="p-16 border border-[var(--border)] rounded-[70px] bg-[var(--mellow-pink)] backdrop-blur-md mb-10">
@@ -3299,11 +3391,65 @@ function checkLab(choiceIndex) {
         // ───────────────────────────────────────────────────────────────
 
 
+        // ── HERO SLIDESHOW ──────────────────────────────────────────────
+        const HERO_IMAGES = [
+            'plants/PV1.jpg','plants/PV5.jpg','plants/PV10.jpg',
+            'plants/PV15.jpg','plants/PV20.jpg','plants/PV25.jpg',
+            'plants/PV30.jpg','plants/PV35.jpg','plants/PV40.jpg'
+        ];
+        let heroIdx = 0;
+        let heroTimer = null;
+
+        function initHero() {
+            const slides = document.getElementById('hero-slides');
+            const dots   = document.getElementById('hero-dots');
+            if (!slides) return;
+            slides.innerHTML = '';
+            dots.innerHTML   = '';
+            HERO_IMAGES.forEach((src, i) => {
+                const img = document.createElement('img');
+                img.src   = src;
+                img.alt   = 'Pink Leaf botanical plant ' + (i + 1);
+                img.className = 'hero-slide';
+                img.loading = i === 0 ? 'eager' : 'lazy';
+                slides.appendChild(img);
+                const dot = document.createElement('div');
+                dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
+                dot.onclick   = () => heroGoto(i);
+                dots.appendChild(dot);
+            });
+            heroGoto(0);
+            startHeroAuto();
+        }
+
+        function heroGoto(idx) {
+            heroIdx = ((idx % HERO_IMAGES.length) + HERO_IMAGES.length) % HERO_IMAGES.length;
+            const slides = document.getElementById('hero-slides');
+            if (slides) slides.style.transform = `translateX(-${heroIdx * 100}%)`;
+            document.querySelectorAll('.hero-dot').forEach((d, i) =>
+                d.classList.toggle('active', i === heroIdx));
+        }
+
+        function heroNav(dir) {
+            heroGoto(heroIdx + dir);
+            restartHeroAuto();
+        }
+
+        function startHeroAuto() {
+            heroTimer = setInterval(() => heroGoto(heroIdx + 1), 4500);
+        }
+
+        function restartHeroAuto() {
+            clearInterval(heroTimer);
+            startHeroAuto();
+        }
+
         window.onload = () => {
-            updateIntro(); 
+            updateIntro();
             showPage('intro');
             updateXPDisplay();
             updateBagUI(); // restore persisted bag from localStorage
+            initHero();
         };
     </script>
 </body>
