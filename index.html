@@ -755,88 +755,77 @@
             color: var(--pink);
         }
         
-        .carousel-container { 
-            perspective: 2500px; 
-            height: 550px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            position: relative; 
-            margin-top: 20px;
-            isolation: isolate;
-            z-index: 1;
+        /* Store Grid Layout */
+        .store-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
         }
-        .carousel-wheel { 
-            position: relative; 
-            width: 320px; 
-            height: 460px; 
-            transform-style: preserve-3d; 
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.3, 1); 
+        @media (min-width: 640px) {
+            .store-grid-layout {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 22px;
+            }
         }
-        .store-card { 
-            position: absolute; 
-            width: 100%; 
-            height: 100%; 
-            backface-visibility: hidden; 
-            transition: 0.8s ease; 
-            border-radius: 40px; 
+        .store-card {
+            border-radius: 28px;
             background: linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(253,250,252,0.95) 100%);
-            border: 1px solid var(--border); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 30px; 
-            opacity: 0.1; 
-            filter: blur(5px); 
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 14px 18px;
+            transition: all 0.3s ease;
         }
         body.dark-mode .store-card {
             background: linear-gradient(160deg, rgba(30, 20, 26, 0.98) 0%, rgba(22, 14, 20, 0.95) 100%);
         }
-        .card-focus { 
-            opacity: 1 !important; 
-            filter: blur(0px) !important; 
-            border: 1.5px solid var(--pink) !important; 
-            z-index: 100; 
-            box-shadow: var(--glow); 
+        .store-card:hover {
+            border-color: var(--pink);
+            box-shadow: 0 8px 30px rgba(212, 165, 178, 0.2);
+            transform: translateY(-3px);
         }
-        body.dark-mode .card-focus {
-            box-shadow: 0 0 60px 15px rgba(212, 165, 178, 0.3), 0 0 0 1px rgba(212, 165, 178, 0.4);
+        .store-card-dimmed {
+            opacity: 0.55;
         }
-        .portal { 
-            border-radius: 50%; 
-            overflow: hidden; 
-            aspect-ratio: 1/1; 
-            border: 2px solid var(--mellow-pink); 
-            width: 180px; 
-            margin-bottom: 25px;
+        .store-card-dimmed:hover {
+            opacity: 0.72;
+            transform: translateY(-2px);
+        }
+        .portal {
+            border-radius: 50%;
+            overflow: hidden;
+            aspect-ratio: 1/1;
+            border: 2px solid var(--mellow-pink);
+            width: 130px;
+            margin-bottom: 16px;
             transition: box-shadow 0.4s;
         }
-        body.dark-mode .card-focus .portal {
-            box-shadow: 0 0 30px 8px rgba(212,165,178,0.25), 0 0 0 2px var(--pink);
+        @media (min-width: 640px) {
+            .portal { width: 160px; margin-bottom: 20px; }
+        }
+        .store-card:hover .portal {
+            box-shadow: 0 0 20px 6px rgba(212,165,178,0.2), 0 0 0 1px var(--pink);
             border-color: var(--pink);
         }
-        .side-arrow { 
-            position: absolute; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            width: 60px; 
-            height: 60px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            z-index: 1000; 
-            background: none; 
-            border: none; 
+        /* Shipping banner */
+        .shipping-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-radius: 50px;
+            background: rgba(212, 165, 178, 0.1);
+            border: 1px solid rgba(212, 165, 178, 0.3);
+            font-size: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--pink);
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
         }
-        .arrow-shape { 
-            width: 30px; 
-            height: 30px; 
-            border-left: 3px solid var(--pink); 
-            border-bottom: 3px solid var(--pink); 
-        }
-        .arrow-left { transform: rotate(45deg); }
-        .arrow-right { transform: rotate(-135deg); }
         .stat-row { 
             display: flex; 
             justify-content: space-between; 
@@ -1003,21 +992,46 @@
             color: white; 
         }
         
-        /* ACCESSIBILITY PANEL - HIGHEST Z-INDEX, LOWER POSITION */
-        .acc-panel { 
-            position: fixed; 
-            right: 10px; 
-            top: 400px !important;
-            background: rgba(212, 165, 178, 0.15); 
-            backdrop-filter: blur(15px); 
-            border: 1px solid var(--border); 
-            border-radius: 25px; 
-            padding: 10px 5px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
+        /* ACCESSIBILITY PANEL */
+        .acc-panel {
+            position: fixed;
+            right: 10px;
+            top: 400px;
+            background: rgba(255, 245, 248, 0.92);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 165, 178, 0.35);
+            border-radius: 25px;
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             z-index: 10000 !important;
         }
+
+        /* FLOATING WHATSAPP BUTTON */
+        .wa-float {
+            position: fixed;
+            right: 10px;
+            bottom: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #25d366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000 !important;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(37,211,102,0.4);
+            border: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .wa-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37,211,102,0.5);
+        }
+        .wa-float svg { width: 24px; height: 24px; fill: white; }
         .acc-panel .acc-actions {
             display: flex;
             flex-direction: column;
@@ -1032,17 +1046,22 @@
             opacity: 1;
             pointer-events: auto;
         }
-        .acc-btn { 
-            width: 36px; 
-            height: 36px; 
-            border-radius: 50%; 
-            border: 1px solid var(--border); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            background: var(--bg); 
-            font-size: 16px; 
+        .acc-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(212, 165, 178, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: rgba(255, 245, 248, 0.95);
+            color: #7a4a58;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        .acc-btn:hover {
+            background: rgba(212, 165, 178, 0.25);
         }
         .hidden { display: none !important; }
         #lab-feedback { 
@@ -1750,6 +1769,9 @@ body.dark-mode .scoreboard-item.current {
         body.dark-mode .care-soldout-btn { color: rgba(255,255,255,0.2) !important; }
         /* ── DARK MODE PATCHES ── */
         body.dark-mode nav { background: var(--bg); }
+        body.dark-mode .acc-panel { background: rgba(30, 15, 20, 0.88); border-color: rgba(212,165,178,0.25); }
+        body.dark-mode .acc-btn { background: rgba(45, 22, 30, 0.95); color: #e8b4c4; border-color: rgba(212,165,178,0.3); }
+        body.dark-mode .acc-btn:hover { background: rgba(212,165,178,0.18); }
         body.dark-mode .care-product-card { background: rgba(20,10,14,0.85); border-color: rgba(212,165,178,0.15); }
         body.dark-mode .care-product-card input,
         body.dark-mode .registry-input { background: rgba(212,165,178,0.06); color: #fff; border-color: rgba(212,165,178,0.2); }
@@ -1757,6 +1779,85 @@ body.dark-mode .scoreboard-item.current {
             /* Mobile: no floater/icon overlap with content */
             .bag-icon-btn { z-index: 10000; }
             body.on-lab-page .logo-container { z-index: 8500 !important; position: relative; }
+        }
+
+        /* ── HERO SLIDESHOW ── */
+        .hero-section {
+            width: 100%;
+            max-width: 860px;
+            margin: 0 auto 32px auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: 48px;
+            border: 1px solid var(--border);
+            height: 400px;
+        }
+        .hero-slides {
+            display: flex;
+            height: 100%;
+            transition: transform 0.75s cubic-bezier(0.25, 1, 0.3, 1);
+            will-change: transform;
+        }
+        .hero-slide {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            pointer-events: none;
+            user-select: none;
+        }
+        .hero-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(212, 165, 178, 0.18);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 46px;
+            height: 46px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: background 0.2s;
+        }
+        .hero-btn:hover { background: rgba(212, 165, 178, 0.38); }
+        .hero-btn-prev { left: 16px; }
+        .hero-btn-next { right: 16px; }
+        .arrow-shape {
+            width: 10px;
+            height: 10px;
+            border-left: 2px solid var(--pink);
+            border-bottom: 2px solid var(--pink);
+        }
+        .arrow-left { transform: rotate(45deg); }
+        .arrow-right { transform: rotate(-135deg); }
+        .hero-dots {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 7px;
+            z-index: 2;
+        }
+        .hero-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(212, 165, 178, 0.4);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .hero-dot.active {
+            background: var(--pink);
+            transform: scale(1.4);
+        }
+        @media (max-width: 600px) {
+            .hero-section { height: 240px; border-radius: 28px; }
         }
     </style>
 </head>
@@ -1776,6 +1877,11 @@ body.dark-mode .scoreboard-item.current {
             </button>
         </div>
     </div>
+
+    <!-- Floating WhatsApp Button -->
+    <button class="wa-float" onclick="window.open('https://wa.me/972559116990')" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </button>
 
     <div class="acc-panel" id="acc-panel">
         <button class="acc-btn acc-toggle" type="button" id="acc-toggle" aria-expanded="false" aria-controls="acc-actions" title="נגישות / Accessibility">♿</button>
@@ -1868,6 +1974,18 @@ body.dark-mode .scoreboard-item.current {
         <button class="nav-link" onclick="showPage('lab', this)" data-he="מעבדה" data-en="LAB">מעבדה</button>
     </nav>
 
+    <!-- HERO SLIDESHOW -->
+    <div id="hero-section" class="hero-section px-0">
+        <div class="hero-slides" id="hero-slides"></div>
+        <button class="hero-btn hero-btn-prev" onclick="heroNav(-1)" aria-label="Previous">
+            <div class="arrow-shape arrow-left"></div>
+        </button>
+        <button class="hero-btn hero-btn-next" onclick="heroNav(1)" aria-label="Next">
+            <div class="arrow-shape arrow-right"></div>
+        </button>
+        <div class="hero-dots" id="hero-dots"></div>
+    </div>
+
     <main id="page-intro" class="max-w-2xl mx-auto p-6 text-center">
         <div class="p-16 border border-[var(--border)] rounded-[70px] bg-[var(--mellow-pink)] backdrop-blur-md mb-10">
             <div id="intro-content" class="text-[14px] opacity-90 space-y-6 tracking-[1px] leading-relaxed"></div>
@@ -1878,7 +1996,10 @@ body.dark-mode .scoreboard-item.current {
         </div>
     </main>
 
-    <main id="page-store" class="hidden max-w-4xl mx-auto relative px-4 pb-20">
+    <main id="page-store" class="hidden max-w-4xl mx-auto px-4 pb-20">
+        <div class="shipping-banner">
+            🚚 <span>משלוח לכל הארץ · Nationwide Shipping Available</span>
+        </div>
         <div class="store-filter">
             <select id="store-filter-select" onchange="filterStore()">
                 <option value="all">All Plants</option>
@@ -1886,10 +2007,7 @@ body.dark-mode .scoreboard-item.current {
                 <option value="coming">Coming Soon</option>
             </select>
         </div>
-        
-        <button class="side-arrow left-10" onclick="spin(1)"><div class="arrow-shape arrow-left"></div></button>
         <div id="store-grid"></div>
-        <button class="side-arrow right-10" onclick="spin(-1)"><div class="arrow-shape arrow-right"></div></button>
     </main>
 
     <main id="page-vault" class="hidden max-w-7xl mx-auto p-6">
@@ -2294,64 +2412,52 @@ body.dark-mode .scoreboard-item.current {
             } else if (currentFilter === 'coming') {
                 filteredItems = ALL_STORE_ITEMS.filter(item => item.status === 'coming');
             }
-            
-            const ang = 360 / filteredItems.length; 
-            let h = `<div class="carousel-container"><div class="carousel-wheel" id="wheel">`;
-            
-            filteredItems.forEach((item, i)=>{ 
+
+            let h = '<div class="store-grid-layout">';
+
+            filteredItems.forEach((item) => {
                 const isAvailable = item.status === "available";
-                const badge = isAvailable ? 
-                    '<span class="availability-badge badge-available">Available</span>' : 
+                const badge = isAvailable ?
+                    '<span class="availability-badge badge-available">Available</span>' :
                     '<span class="availability-badge badge-coming-soon">Coming Soon</span>';
-                
+
                 let dropdownHTML = '';
                 if (isAvailable && item.availability) {
                     const allOptions = ["Tissue Culture", "Starter Plant", "Mature Plant"];
                     if (isAlocasia(item.name)) allOptions.push("Corm");
-                    
-                    dropdownHTML = '<div class="availability-dropdown"><select class="availability-select"><option value="">Select Availability</option>';
+                    dropdownHTML = '<div class="availability-dropdown"><select class="availability-select"><option value="">Select Type</option>';
                     allOptions.forEach(opt => {
                         const isOptAvailable = item.availability.includes(opt);
-                        dropdownHTML += isOptAvailable ? 
-                            `<option value="${opt}">${opt}</option>` : 
+                        dropdownHTML += isOptAvailable ?
+                            `<option value="${opt}">${opt}</option>` :
                             `<option disabled>${opt} (Unavailable)</option>`;
                     });
                     dropdownHTML += '</select></div>';
                 }
-                
-                const btnHTML = isAvailable ? 
-                    `<button class="add-to-cart-btn" id="cart-btn-${item.id}" onclick="addToCart('${item.id}', '${item.name}', this)">ADD TO BAG</button>` : 
-                    '<button class="btn" style="opacity: 0.5; cursor: not-allowed;" disabled>COMING SOON</button>';
-                
+
+                const btnHTML = isAvailable ?
+                    `<button class="add-to-cart-btn" id="cart-btn-${item.id}" onclick="addToCart('${item.id}', '${item.name}', this)">ADD TO BAG</button>` :
+                    '<button class="btn" style="opacity:0.4;cursor:not-allowed;font-size:8px;" disabled>COMING SOON</button>';
+
                 h += `
-                <div class="store-card ${i===0?'card-focus':''}" style="transform:rotateY(${i*ang}deg) translateZ(280px)">
+                <div class="store-card${isAvailable ? '' : ' store-card-dimmed'}">
                     ${badge}
-                    <div class="portal"><img src="plants/${item.id}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-dark.png'" style="opacity: ${isAvailable ? '1' : '0.6'}"></div>
-                    <p class="serif text-[11px] font-bold text-center mb-4">${item.name}</p>
+                    <div class="portal"><img src="plants/${item.id}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-dark.png'"></div>
+                    <p class="serif text-[11px] font-bold text-center mb-3">${item.name}</p>
                     ${dropdownHTML}
-                    <div class="w-full space-y-2 mb-6">
+                    <div class="w-full space-y-2 mb-4">
                         <div class="stat-row"><span>☀️ Light</span><span>${item.light}</span></div>
                         <div class="stat-row"><span>💧 Humidity</span><span>${item.humidity}</span></div>
                     </div>
                     ${btnHTML}
                 </div>`;
             });
-            
-            h += '</div></div>';
+
+            h += '</div>';
             document.getElementById('store-grid').innerHTML = h;
-            window.sLen = filteredItems.length; 
-            window.sAng = ang; 
-            rot = 0;
         }
 
-        function spin(d){ 
-            rot += d * window.sAng; 
-            const wheel = document.getElementById('wheel');
-            if(wheel) wheel.style.transform = `rotateY(${rot}deg)`; 
-            const cards = document.querySelectorAll('.store-card'); 
-            const act = (Math.round(-rot/window.sAng) % window.sLen + window.sLen) % window.sLen; 
-            cards.forEach((c,i) => c.classList.toggle('card-focus', i === act));
-        }
+        function spin(d){ /* carousel removed */ }
 
         function renderVault(f){ 
     let h = ""; 
@@ -3299,11 +3405,65 @@ function checkLab(choiceIndex) {
         // ───────────────────────────────────────────────────────────────
 
 
+        // ── HERO SLIDESHOW ──────────────────────────────────────────────
+        const HERO_IMAGES = [
+            'plants/PV1.jpg','plants/PV5.jpg','plants/PV10.jpg',
+            'plants/PV15.jpg','plants/PV20.jpg','plants/PV25.jpg',
+            'plants/PV30.jpg','plants/PV35.jpg','plants/PV40.jpg'
+        ];
+        let heroIdx = 0;
+        let heroTimer = null;
+
+        function initHero() {
+            const slides = document.getElementById('hero-slides');
+            const dots   = document.getElementById('hero-dots');
+            if (!slides) return;
+            slides.innerHTML = '';
+            dots.innerHTML   = '';
+            HERO_IMAGES.forEach((src, i) => {
+                const img = document.createElement('img');
+                img.src   = src;
+                img.alt   = 'Pink Leaf botanical plant ' + (i + 1);
+                img.className = 'hero-slide';
+                img.loading = i === 0 ? 'eager' : 'lazy';
+                slides.appendChild(img);
+                const dot = document.createElement('div');
+                dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
+                dot.onclick   = () => heroGoto(i);
+                dots.appendChild(dot);
+            });
+            heroGoto(0);
+            startHeroAuto();
+        }
+
+        function heroGoto(idx) {
+            heroIdx = ((idx % HERO_IMAGES.length) + HERO_IMAGES.length) % HERO_IMAGES.length;
+            const slides = document.getElementById('hero-slides');
+            if (slides) slides.style.transform = `translateX(-${heroIdx * 100}%)`;
+            document.querySelectorAll('.hero-dot').forEach((d, i) =>
+                d.classList.toggle('active', i === heroIdx));
+        }
+
+        function heroNav(dir) {
+            heroGoto(heroIdx + dir);
+            restartHeroAuto();
+        }
+
+        function startHeroAuto() {
+            heroTimer = setInterval(() => heroGoto(heroIdx + 1), 4500);
+        }
+
+        function restartHeroAuto() {
+            clearInterval(heroTimer);
+            startHeroAuto();
+        }
+
         window.onload = () => {
-            updateIntro(); 
+            updateIntro();
             showPage('intro');
             updateXPDisplay();
             updateBagUI(); // restore persisted bag from localStorage
+            initHero();
         };
     </script>
 </body>
