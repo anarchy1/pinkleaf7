@@ -1613,6 +1613,18 @@ body.dark-mode .scoreboard-item.current {
             transform: translateY(-2px);
         }
         .bag-cta:active { transform: scale(0.98); }
+        /* Card payment CTA — primary, ink-dark to distinguish from concierge */
+        .bag-cta-card { background: var(--ink, #2a1a20); }
+        body.dark-mode .bag-cta-card { background: #1a0e12; box-shadow: 0 4px 24px rgba(0,0,0,0.35); }
+        .bag-cta-card:hover { background: #3a2630; }
+        .bag-cta-card:disabled { cursor: default; }
+        .bag-or {
+            text-align: center;
+            font-size: 7px;
+            letter-spacing: 2px;
+            color: rgba(212,165,178,0.5);
+            margin: 12px 0;
+        }
 
         .bag-fine-print {
             text-align: center;
@@ -1934,6 +1946,12 @@ body.dark-mode .scoreboard-item.current {
                 <span class="bag-total-amount" id="bag-total-display">—</span>
             </div>
             <div class="bag-total-note" id="bag-total-note">PRICES CONFIRMED ON INQUIRY</div>
+            <!-- Secure card payment via MPGS Hosted Checkout (needs Netlify env vars; see PAYMENTS-SETUP.md) -->
+            <button class="bag-cta bag-cta-card" id="bag-card-cta" data-label="PAY SECURELY BY CARD" onclick="payWithCard()">
+                <span>💳</span>
+                <span class="bag-card-label">PAY SECURELY BY CARD</span>
+            </button>
+            <div class="bag-or">— או / or —</div>
             <button class="bag-cta" onclick="sendBagWhatsApp()">
                 <span>💬</span>
                 REQUEST AVAILABILITY VIA CONCIERGE
@@ -2241,7 +2259,10 @@ body.dark-mode .scoreboard-item.current {
     "PV86":{"name":"Alocasia nebula albo var","family":"Alocasia"},
     "PV87":{"name":"Alocasia Maharani variegated","family":"Alocasia"},
     "PV88":{"name":"Caladium lindenii var","family":"Others"},
-    "PV89":{"name":"Alocasia melo white var","family":"Alocasia"}
+    "PV89":{"name":"Alocasia melo white var","family":"Alocasia"},
+    "PV90":{"name":"Alocasia Amazonica Pink Variegated","family":"Alocasia"},
+    "PV91":{"name":"Alocasia Dragon Scale Albo Variegated","family":"Alocasia"},
+    "PV92":{"name":"Alocasia Macrorrhizos Splash","family":"Alocasia"}
 };
 
 
@@ -2263,6 +2284,16 @@ body.dark-mode .scoreboard-item.current {
             { id: "PV81", name: "Alocasia Heart Balloon", availability: ["Starter Plant"], light: "65%", humidity: "85%", status: "available" },
             { id: "PV25", name: "Alocasia Macrorrhiza Var.", availability: ["Tissue Culture", "Starter Plant", "Mature Plant"], light: "80%", humidity: "70%", status: "available" },
             { id: "PV48", name: "Philodendron Jose Buono", availability: ["Tissue Culture", "Starter Plant", "Mature Plant"], light: "60%", humidity: "65%", status: "available" },
+            { id: "PV23", name: "Alocasia Black Velvet Gold Var", availability: ["Starter Plant"], light: "65%", humidity: "80%", status: "available" },
+            { id: "PV87", name: "Alocasia Maharani Albo Var", availability: ["Starter Plant"], light: "65%", humidity: "85%", status: "available" },
+            { id: "PV90", name: "Alocasia Amazonica Pink Var", availability: ["Starter Plant"], light: "70%", humidity: "80%", status: "available" },
+            { id: "PV91", name: "Alocasia Dragon Scale Albo Var", availability: ["Starter Plant"], light: "65%", humidity: "85%", status: "available" },
+            { id: "PV78", name: "Alocasia Simpo Albo Var", availability: ["Starter Plant"], light: "65%", humidity: "80%", status: "available" },
+            { id: "PV14", name: "Alocasia Dragon Scale Mint", availability: ["Starter Plant"], light: "65%", humidity: "85%", status: "available" },
+            { id: "PV84", name: "Alocasia Pseudo Sanderiana", availability: ["Starter Plant"], light: "60%", humidity: "75%", status: "available" },
+            { id: "PV15", name: "Alocasia Dragon Scale Albo", availability: ["Starter Plant"], light: "65%", humidity: "85%", status: "available" },
+            { id: "PV89", name: "Alocasia Melo Albo Var", availability: ["Starter Plant"], light: "65%", humidity: "80%", status: "available" },
+            { id: "PV92", name: "Alocasia Macrorrhizos Splash", availability: ["Starter Plant"], light: "75%", humidity: "75%", status: "available" },
             { id: "PV8", name: "Monstera 'Yellow Marilyn'", light: "70%", humidity: "60%", status: "coming" },
             { id: "PV11", name: "Monstera 'White Monster'", light: "85%", humidity: "70%", status: "coming" },
             { id: "PV72", name: "Musa Nono Pink Var", light: "90%", humidity: "75%", status: "coming" },
@@ -2668,6 +2699,16 @@ function checkLab(choiceIndex) {
         const ITEM_PRICES = {
             // "PV19_Tissue Culture": 180,
             // "PV19_Mature Plant": 650,
+            "PV23_Starter Plant": 200,
+            "PV87_Starter Plant": 650,
+            "PV90_Starter Plant": 330,
+            "PV91_Starter Plant": 200,
+            "PV78_Starter Plant": 200,
+            "PV14_Starter Plant": 150,
+            "PV84_Starter Plant": 900,
+            "PV15_Starter Plant": 180,
+            "PV89_Starter Plant": 500,
+            "PV92_Starter Plant": 50,
         };
 
         // Load from localStorage
@@ -2851,6 +2892,99 @@ function checkLab(choiceIndex) {
         // Legacy stubs — keep so old HTML refs don't break
         function toggleCartDrawer() {}
         function sendWhatsAppOrder() { sendBagWhatsApp(); }
+
+        // ─── MPGS HOSTED CHECKOUT — secure card payment ─────────────────
+        // A static page can't call MPGS directly: creating a checkout session
+        // needs the secret API password. So this posts the order to a Netlify
+        // Function (netlify/functions/create-checkout-session.js) which creates
+        // the session server-side, then hands the session to Mastercard's
+        // checkout.js to show the hosted payment page. Setup: PAYMENTS-SETUP.md
+        let _mpgsScriptLoaded = false;
+
+        // checkout.js requires named global callbacks for error/cancel.
+        window.mpgsError = function (err) {
+            console.error('MPGS error', err);
+            alert('אירעה שגיאה בתשלום. נסו שוב או צרו קשר.\nA payment error occurred. Please try again or contact us.');
+            setCardBtnLoading(false);
+        };
+        window.mpgsCancel = function () { setCardBtnLoading(false); };
+
+        function setCardBtnLoading(on) {
+            const btn = document.getElementById('bag-card-cta');
+            if (!btn) return;
+            btn.disabled = on;
+            btn.style.opacity = on ? '0.6' : '';
+            const label = btn.querySelector('.bag-card-label');
+            if (label) label.textContent = on ? 'מעבד… / Processing…' : btn.dataset.label;
+        }
+
+        function loadCheckoutJs(host, version) {
+            return new Promise((resolve, reject) => {
+                if (_mpgsScriptLoaded && window.Checkout) return resolve();
+                const s = document.createElement('script');
+                s.src = `https://${host}/checkout/version/${version}/checkout.js`;
+                s.setAttribute('data-error', 'mpgsError');
+                s.setAttribute('data-cancel', 'mpgsCancel');
+                s.onload = () => { _mpgsScriptLoaded = true; resolve(); };
+                s.onerror = () => reject(new Error('Failed to load checkout.js from ' + host));
+                document.head.appendChild(s);
+            });
+        }
+
+        async function payWithCard() {
+            if (bag.length === 0) return;
+
+            const priced = bag.filter(i => i.price !== null);
+            if (priced.length === 0) {
+                alert('הפריטים בסל מתומחרים לפי בקשה.\nItems in your bag are priced on inquiry — please use “Request availability”.');
+                return;
+            }
+            const total = priced.reduce((s, i) => s + i.price * i.qty, 0);
+
+            if (priced.length < bag.length) {
+                const ok = confirm(
+                    'חלק מהפריטים מתומחרים לפי בקשה ולא ייכללו בתשלום.\n' +
+                    "Some items are priced on inquiry and won't be charged.\n\n" +
+                    `תשלום עכשיו / Pay now: ${total.toLocaleString()}₪`);
+                if (!ok) return;
+            }
+
+            setCardBtnLoading(true);
+            try {
+                const orderId = 'PL-' + Date.now();
+                const res = await fetch('/.netlify/functions/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: total,
+                        currency: 'ILS',
+                        orderId,
+                        description: priced.map(i => `${i.qty}x ${i.name}`).join(', '),
+                    }),
+                });
+                const data = await res.json();
+                if (!res.ok || !data.sessionId) {
+                    throw new Error(data.error || 'Could not start checkout');
+                }
+
+                await loadCheckoutJs(data.gatewayHost, data.apiVersion);
+
+                Checkout.configure({
+                    session: { id: data.sessionId },
+                    interaction: {
+                        merchant: { name: 'Pink Leaf', url: location.origin },
+                        displayControl: { billingAddress: 'OPTIONAL' },
+                    },
+                });
+                // Redirects to the Mastercard-hosted card page. On completion the
+                // gateway returns the payer to payment-result.html for verification.
+                Checkout.showPaymentPage();
+            } catch (err) {
+                console.error(err);
+                alert('לא הצלחנו להתחיל את התשלום. נסו שוב מאוחר יותר או שלחו בקשת זמינות.\nCould not start payment. Please try again later or use “Request availability”.');
+                setCardBtnLoading(false);
+            }
+        }
 
         // Init on load
         updateBagUI();
