@@ -2291,6 +2291,7 @@ body.dark-mode .scoreboard-item.current {
             { id: "PV15", name: "Alocasia Dragon Scale Albo", availability: ["Starter Plant"], light: "65%", humidity: "80%", status: "available" },
             { id: "PV89", name: "Alocasia Melo Albo Var", availability: ["Starter Plant"], light: "70%", humidity: "70%", status: "available" },
             { id: "PV92", name: "Alocasia Macrorrhizos Splash", availability: ["Starter Plant"], light: "75%", humidity: "65%", status: "available" },
+            { id: "PV93", name: "Alocasia Pseudo Sanderiana", availability: ["Starter Plant"], light: "65%", humidity: "80%", status: "sold_out" },
             { id: "PV8", name: "Monstera 'Yellow Marilyn'", light: "70%", humidity: "60%", status: "coming" },
             { id: "PV11", name: "Monstera 'White Monster'", light: "85%", humidity: "70%", status: "coming" },
             { id: "PV72", name: "Musa Nono Pink Var", light: "90%", humidity: "75%", status: "coming" },
@@ -2445,8 +2446,11 @@ body.dark-mode .scoreboard-item.current {
 
             filteredItems.forEach((item) => {
                 const isAvailable = item.status === "available";
+                const isSoldOut = item.status === "sold_out";
                 const badge = isAvailable ?
                     '<span class="availability-badge badge-available">Available</span>' :
+                    isSoldOut ?
+                    '<span class="availability-badge" style="background:#e74c3c;color:#fff;border:none;">Sold Out</span>' :
                     '<span class="availability-badge badge-coming-soon">Coming Soon</span>';
 
                 let dropdownHTML = '';
@@ -2463,8 +2467,16 @@ body.dark-mode .scoreboard-item.current {
                     dropdownHTML += '</select></div>';
                 }
 
+                let soldOutPriceHTML = '';
+                if (isSoldOut) {
+                    const priceKey = `${item.id}_Starter Plant`;
+                    const p = ITEM_PRICES[priceKey];
+                    if (p) soldOutPriceHTML = `<p style="text-align:center;font-size:13px;font-weight:bold;margin-bottom:8px;color:#c0392b;">₪${p}</p>`;
+                }
                 const btnHTML = isAvailable ?
                     `<button class="add-to-cart-btn" id="cart-btn-${item.id}" onclick="addToCart('${item.id}', '${item.name}', this)">ADD TO BAG</button>` :
+                    isSoldOut ?
+                    '<button class="btn" style="opacity:0.4;cursor:not-allowed;font-size:8px;background:#e74c3c;" disabled>SOLD OUT</button>' :
                     '<button class="btn" style="opacity:0.4;cursor:not-allowed;font-size:8px;" disabled>COMING SOON</button>';
 
                 h += `
@@ -2477,6 +2489,7 @@ body.dark-mode .scoreboard-item.current {
                         <div class="stat-row"><span>☀️ Light</span><span>${item.light}</span></div>
                         <div class="stat-row"><span>💧 Humidity</span><span>${item.humidity}</span></div>
                     </div>
+                    ${soldOutPriceHTML}
                     ${btnHTML}
                 </div>`;
             });
@@ -2705,6 +2718,7 @@ function checkLab(choiceIndex) {
             "PV15_Starter Plant": 180,
             "PV89_Starter Plant": 500,
             "PV92_Starter Plant": 50,
+            "PV93_Starter Plant": 650,
         };
 
         // Load from localStorage
